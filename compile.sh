@@ -87,17 +87,15 @@ fi
 ./scripts/feeds update -a
 ./scripts/feeds install -a
 
-# 如果选择了 LEDE 源码，执行清理和克隆操作
+# 根据选择执行清理和克隆操作
 if [ "$src_choice" -eq 3 ]; then
-    echo "执行额外清理和克隆操作..."
+    echo "执行 LEDE 特定清理和克隆操作..."
     rm -rf feeds/packages/net/mosdns
     rm -rf feeds/packages/net/msd_lite
+    rm -rf feeds/packages/net/smartdns
     rm -rf feeds/luci/themes/luci-theme-argon
     rm -rf feeds/luci/themes/luci-theme-netgear
     rm -rf feeds/luci/applications/luci-app-mosdns
-    rm -rf feeds/luci/applications/luci-app-mosdns
-    rm -rf feeds/packages/net/{alist,adguardhome,mosdns,xray*,v2ray*,v2ray*,sing*,smartdns}
-    rm -rf feeds/packages/utils/v2dat
     rm -rf feeds/luci/applications/luci-app-netdata # golang 1.22 依赖
     git clone --depth=1 https://github.com/sbwml/packages_lang_golang -b 22.x feeds/packages/lang/golang
 
@@ -105,6 +103,13 @@ if [ "$src_choice" -eq 3 ]; then
     rm -rf feeds/packages/lang/golang
     find ./ | grep Makefile | grep v2ray-geodata | xargs rm -f
     find ./ | grep Makefile | grep mosdns | xargs rm -f
+else
+    echo "执行源码特定清理和克隆操作..."
+    rm -rf feeds/luci/applications/luci-app-mosdns
+    rm -rf feeds/packages/net/{alist,adguardhome,mosdns,xray*,v2ray*,sing*,smartdns}
+    rm -rf feeds/packages/utils/v2dat
+    rm -rf feeds/packages/lang/golang
+    git clone --depth=1 https://github.com/sbwml/packages_lang_golang -b 23.x feeds/packages/lang/golang
 fi
 
 # 配置菜单
