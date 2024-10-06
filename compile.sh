@@ -75,10 +75,16 @@ read -p "输入选项（1-2）: " feed_choice
 
 if [ "$feed_choice" -eq 1 ]; then
     echo "添加 OpenWrt 官方插件源..."
-    echo "src-git packages https://git.openwrt.org/feed/packages.git" >> feeds.conf.default
+    echo "src-git packages https://git.openwrt.org/feed/packages.git;OpenWrt" >> feeds.conf.default
+    echo "src-git passwall1 https://github.com/xiaorouji/openwrt-passwall.git;main" >> feeds.conf.default
+    echo "src-git passwall-package https://github.com/xiaorouji/openwrt-passwall-packages;main" >> feeds.conf.default
+    echo "src-git passwall2 https://github.com/xiaorouji/openwrt-passwall2;main" >> feeds.conf.default
 elif [ "$feed_choice" -eq 2 ]; then
     echo "添加 LEDE 插件源..."
-    echo "src-git packages https://git.lede-project.org/feed/packages.git" >> feeds.conf.default
+    echo "src-git packages https://github.com/oppen321/OpenWrt-Package;Lede" >> feeds.conf.default
+    echo "src-git passwall1 https://github.com/xiaorouji/openwrt-passwall.git;main" >> feeds.conf.default
+    echo "src-git passwall-package https://github.com/xiaorouji/openwrt-passwall-packages;main" >> feeds.conf.default
+    echo "src-git passwall2 https://github.com/xiaorouji/openwrt-passwall2;main" >> feeds.conf.default
 else
     echo "无效选择"; exit 1
 fi
