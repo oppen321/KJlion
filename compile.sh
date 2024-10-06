@@ -75,16 +75,10 @@ read -p "输入选项（1-2）: " feed_choice
 
 if [ "$feed_choice" -eq 1 ]; then
     echo "添加 OpenWrt 官方插件源..."
-    echo "src-git packages https://git.openwrt.org/feed/packages.git;OpenWrt" >> feeds.conf.default
-    echo "src-git passwall1 https://github.com/xiaorouji/openwrt-passwall.git;main" >> feeds.conf.default
-    echo "src-git passwall-package https://github.com/xiaorouji/openwrt-passwall-packages;main" >> feeds.conf.default
-    echo "src-git passwall2 https://github.com/xiaorouji/openwrt-passwall2;main" >> feeds.conf.default
+    echo "src-git packages https://git.openwrt.org/feed/packages.git" >> feeds.conf.default
 elif [ "$feed_choice" -eq 2 ]; then
     echo "添加 LEDE 插件源..."
-    echo "src-git packages https://github.com/oppen321/OpenWrt-Package;Lede" >> feeds.conf.default
-    echo "src-git passwall1 https://github.com/xiaorouji/openwrt-passwall.git;main" >> feeds.conf.default
-    echo "src-git passwall-package https://github.com/xiaorouji/openwrt-passwall-packages;main" >> feeds.conf.default
-    echo "src-git passwall2 https://github.com/xiaorouji/openwrt-passwall2;main" >> feeds.conf.default
+    echo "src-git packages https://git.lede-project.org/feed/packages.git" >> feeds.conf.default
 else
     echo "无效选择"; exit 1
 fi
@@ -93,8 +87,31 @@ fi
 ./scripts/feeds update -a
 ./scripts/feeds install -a
 
+# 如果选择了 LEDE 源码，执行清理和克隆操作
+if [ "$src_choice" -eq 3 ]; then
+    echo "执行额外清理和克隆操作..."
+    rm -rf feeds/packages/net/mosdns
+    rm -rf feeds/packages/net/msd_lite
+    rm -rf feeds/luci/themes/luci-theme-argon
+    rm -rf feeds/luci/themes/luci-theme-netgear
+    rm -rf feeds/luci/applications/luci-app-mosdns
+    rm -rf feeds/luci/applications/luci-app-mosdns
+    rm -rf feeds/packages/net/{alist,adguardhome,mosdns,xray*,v2ray*,v2ray*,sing*,smartdns}
+    rm -rf feeds/packages/utils/v2dat
+    rm -rf feeds/luci/applications/luci-app-netdata # golang 1.22 依赖
+    git clone --depth=1 https://github.com/sbwml/packages_lang_golang -b 22.x feeds/packages/lang/golang
+
+    rm -rf feeds/luci/applications/luci-app-serverchan
+    rm -rf feeds/packages/lang/golang
+    find ./ | grep Makefile | grep v2ray-geodata | xargs rm -f
+    find ./ | grep Makefile | grep mosdns | xargs rm -f
+fi
+
 # 配置菜单
 make menuconfig
+
+# 提示用户手动完成配置
+read -p "配置完成后按任意键继续... "
 
 # 下载编译依赖
 make download -j8
