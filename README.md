@@ -1,1 +1,1 @@
-sh -c "$(curl -fsSL https://is.gd/SmFvV1)"
+sh -c "$(curl -fsSL is.gd/SmFvV1)"
